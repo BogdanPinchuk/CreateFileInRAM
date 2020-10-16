@@ -25,7 +25,7 @@ namespace FileInRAM
             var size = new FileInfo(path).Length;
             var str = new StringBuilder();
 
-            using (var mmFile = MemoryMappedFile.CreateFromFile(path, FileMode.OpenOrCreate, "text",
+            using (var mmFile = MemoryMappedFile.CreateFromFile(path, FileMode.OpenOrCreate, null,
                 size, MemoryMappedFileAccess.Read))
             using (var stream = mmFile.CreateViewStream(0, size, MemoryMappedFileAccess.Read))
             using (var reader = new StreamReader(stream))
@@ -41,7 +41,7 @@ namespace FileInRAM
 
             str.Append($"\nRecord MMF: {DateTime.Now}");
 
-            using (var mmFile = MemoryMappedFile.CreateFromFile(path, FileMode.Open, "text", str.Length))
+            using (var mmFile = MemoryMappedFile.CreateFromFile(path, FileMode.Open, null, str.Length))
             using (var stream = mmFile.CreateViewStream())
             using (var writer = new StreamWriter(stream))
             {
