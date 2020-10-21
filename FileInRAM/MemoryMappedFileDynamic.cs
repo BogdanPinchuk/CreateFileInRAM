@@ -112,15 +112,15 @@ namespace FileInRAM
                         stream = instance.CreateViewStream(offset, size, access);
 
                     this.stream.CopyTo(stream);
-                    this.stream.Flush();
-                    this.stream.Close();
+                    //this.stream.Flush();
+                    //this.stream.Close();
 
                     this.instance.Dispose();
                     this.instance = instance;
                     stream.CopyTo(this.stream);
 
-                    instance.Dispose();
-                    stream.Dispose();
+                    //instance.Dispose();
+                    //stream.Dispose();
                 }
                 else
                 {
@@ -133,9 +133,7 @@ namespace FileInRAM
             get { return accessor; }
         }
 
-        private MemoryMappedFileDynamic(MemoryMappedFile instance)
-            => this.instance = instance;
-
+        public MemoryMappedFileDynamic() { }
 
         public void CreateFromFile(string path)
         {
@@ -193,7 +191,7 @@ namespace FileInRAM
             ci = CreateInstance.CreateFromFile;
             ni = 5;
         }
-
+        
         public void CreateNew(string mapName, long capacity)
         {
             instance = MemoryMappedFile.CreateNew(mapName, capacity);
@@ -222,7 +220,7 @@ namespace FileInRAM
             ci = CreateInstance.CreateNew;
             ni = 2;
         }
-
+        
         public void CreateOrOpen(string mapName, long capacity)
         {
             instance = MemoryMappedFile.CreateOrOpen(mapName, capacity);
@@ -251,7 +249,7 @@ namespace FileInRAM
             ci = CreateInstance.CreateOrOpen;
             ni = 2;
         }
-
+        
         public void OpenExistingstring(string mapName)
         {
             instance = MemoryMappedFile.OpenExisting(mapName);
