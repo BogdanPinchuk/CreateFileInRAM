@@ -37,28 +37,26 @@ namespace FileInRAM
 
             //using (var mmFile = MemoryMappedFile.CreateFromFile(path))
             using (var mmFile = MemoryMappedFile.CreateFromFile(path, FileMode.OpenOrCreate, null, size, MemoryMappedFileAccess.Read))
-            //using (var streamR = mmFile.CreateViewStream())
+            //using (var stream = mmFile.CreateViewStream())
             using (var streamR = mmFile.CreateViewStream(0, size, MemoryMappedFileAccess.Read))
             using (var reader = new StreamReader(streamR))
-            //using (var writer = new StreamWriter(stream))
-            //using (var reader2 = new StreamReader(stream))
+            using (var writer = new StreamWriter(stream))
+            using (var reader2 = new StreamReader(stream))
             {
                 // read info in file
                 streamR.CopyTo(stream);
                 //writer.Write(reader.ReadToEnd());
                 //writer.Flush();
-                
 
-                //stream.Position = 0;
-                //str.Append(reader2.ReadToEnd());
+                stream.Position = 0;
+                str.Append(reader2.ReadToEnd());
 
                 Console.WriteLine("Result of file (data):\n");
                 Console.WriteLine(str);
 
-                //Console.ReadKey(true);
+                Console.ReadKey(true);
             }
 
-            Console.ReadKey(true);
 
             /*
             str.Append($"\nRecord MMF: {DateTime.Now}");
