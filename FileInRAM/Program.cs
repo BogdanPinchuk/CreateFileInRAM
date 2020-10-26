@@ -13,6 +13,8 @@ namespace FileInRAM
         /// </summary>
         private static readonly string path = "test.txt";
 
+        private static MemoryStream stream = new MemoryStream();
+
         static void Main()
         {
             Console.OutputEncoding = Encoding.Unicode;
@@ -33,44 +35,41 @@ namespace FileInRAM
             var size = new FileInfo(path).Length;
             var str = new StringBuilder();
 
-            using (var mmFile = new MemoryMappedFileDynamic())
+            //using (var mmFile = MemoryMappedFile.CreateFromFile(path))
+            using (var mmFile = MemoryMappedFile.CreateFromFile(path, FileMode.OpenOrCreate, null, size, MemoryMappedFileAccess.Read))
+            //using (var stream = mmFile.CreateViewStream())
+            using (var streamR = mmFile.CreateViewStream(0, size, MemoryMappedFileAccess.Read))
+            using (var reader = new StreamReader(streamR))
+            using (var writer = new StreamWriter(stream))
+            using (var reader2 = new StreamReader(stream))
             {
-                mmFile.CreateFromFile(path, FileMode.OpenOrCreate, null, size, MemoryMappedFileAccess.Read);
-                mmFile.CreateViewStream(0, size, MemoryMappedFileAccess.Read);
+                // read info in file
+                streamR.CopyTo(stream);
+                //writer.Write(reader.ReadToEnd());
+                //writer.Flush();
 
-                using (var stream = mmFile.Stream)
-                using (var reader = new StreamReader(stream))
-                {
-                    // read info in file
-                    str.Append(reader.ReadToEnd().Trim());
+                stream.Position = 0;
+                str.Append(reader2.ReadToEnd());
 
-                    Console.WriteLine("Result of file (data):\n");
-                    Console.WriteLine(str);
+                Console.WriteLine("Result of file (data):\n");
+                Console.WriteLine(str);
 
-                    //Console.ReadKey(true);
-
-                }
+                Console.ReadKey(true);
             }
 
-            using (var mmFile = new MemoryMappedFileDynamic())
+
+            /*
+            str.Append($"\nRecord MMF: {DateTime.Now}");
+
+            //using (var mmFile = MemoryMappedFile.CreateFromFile(path))
+            using (var mmFile = MemoryMappedFile.CreateFromFile(path, FileMode.Open, null, str.Length))
+            using (var stream = mmFile.CreateViewStream())
+            using (var writer = new StreamWriter(stream))
             {
-                mmFile.CreateFromFile(path, FileMode.Open, null, str.Length);
-                mmFile.CreateViewStream(0, size);
-
-                using (var stream = mmFile.Stream)
-                using (var writer = new StreamWriter(stream))
-                {
-                    for (int i = 0; i < 10; i++)
-                    {
-                        var s = $"\nRecord MMF: {DateTime.Now}";
-                        str.Append(s);
-                        Console.WriteLine(s);
-                    }
-
-                    // write data in file
-                    writer.WriteLine(str);
-                }
+                // write data in file
+                writer.WriteLine(str);
             }
+            */
         }
 
         static void BaseMMF()
